@@ -1,5 +1,5 @@
 # joptimize-laravel
-Joptimize wrapper for Laravel framework
+[Joptimize](https://github.com/nonetallt/joptimize) wrapper for Laravel framework
 
 # Installation
 ```
