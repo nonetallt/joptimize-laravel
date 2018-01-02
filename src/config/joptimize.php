@@ -16,9 +16,9 @@ return [
             },
             'parameters' => [
                 [
-                    'type'   => 'enum',
-                    'name'   => 'SLEEP',
-                    'values' => [1]
+                    'type' => 'enum',
+                    'name' => 'SLEEP',
+                    'args' => [1]
                 ]
             ]
         ]
