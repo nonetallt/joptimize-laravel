@@ -17,27 +17,75 @@ class JoptimizeCommand extends Command
 
     public function handle()
     {
+        /* Print empty line to avoid cluttered output */
+        $this->line('');
         foreach(config('joptimize.optimize') as $method)
         {
-            $optimizer = new Joptimize();
+            /* Get initialization options from config */
+            $initOptions = $method['init'] ?? [];
+            $optimizer = new Joptimize($initOptions);
+
             foreach($method['parameters'] as $param)
             {
+                /* Use config parameter type to call method, ex. defineLinear */
                 $define = 'define' . ucfirst($param['type']);
-                $optimizer->$define($param['name'], ...$param['args']);
+                $parameter = $optimizer->$define($param['name'], ...$param['args']);
             }
 
+            $this->defineProgressBarUpdates($optimizer);
             $result = $optimizer->optimize($method['method']);
+
             foreach($result as $name => $value)
             {
                 try {
+                    $value = $this->applyMutators($method, $name, $value);
                     $this->editVariable($name, $value);
-                    $this->info("Optimized variable '$name' : $value");
+                    $this->info(" Optimized variable '$name' : $value". PHP_EOL);
                 } 
                 catch(\Exception $e) { 
                     $this->error($e->getMessage());
                 }
             }
         }
+    }
+
+    private function applyMutators(array $method, string $name, string $value)
+    {
+        /* Find if there is a mutate setting defined for this parameter */
+        $mutate = collect($method['parameters'])->first(function($value) use ($name) {
+            return $value['name'] === $name;
+        })['mutate'] ?? null;
+
+        /* Check if mutator can be called before applying the result of the
+            * function */
+        if(! is_null($mutate) && is_callable($mutate)) return $mutate($value);
+
+        /* Otherwise return unmutated value */
+        return $value;
+    }
+
+    private function defineProgressBarUpdates(Joptimize $optimizer)
+    {
+        /* Create a progress bar on the first iteration */
+            $optimizer->onFirstIteration(function($info) {
+                $progress = $this->output->createProgressBar($info->totalIterations);
+                $progress->setFormatDefinition('custom','%message%'.PHP_EOL.'%current%/%max% %bar% %percent%%');
+                $progress->setFormat('custom');
+                $info->saveValue('progress', $progress);
+            });
+
+            $optimizer->onIterationStart(function($info) {
+                $info->progress->setMessage("Testing parameter '{$info->name}' with value {$info->value}");
+            });
+
+            $optimizer->onIterationEnd(function($info) {
+                $info->progress->advance();
+            });
+
+            $optimizer->onLastIteration(function($info)  {
+                $info->progress->setMessage("Optimized '{$info->name}', best time was {$info->bestTime} with value {$info->bestValue}.");
+                $info->progress->finish();
+            });
     }
 
     private function editVariable(string $name, string $value)
