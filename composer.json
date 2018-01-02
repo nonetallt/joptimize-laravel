@@ -26,7 +26,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Nonetallt\\Joptimize\\JoptimizeServiceProvider"
+                "Nonetallt\\Joptimize\\Laravel\\JoptimizeServiceProvider"
             ],
             "aliases": {
             }
