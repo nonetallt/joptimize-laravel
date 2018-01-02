@@ -1,0 +1,35 @@
+{
+    "name": "nonetallt/joptimize-laravel",
+    "description": "nonetallt/joptimize wrapper for laravel",
+    "keywords": ["php", "optimize", "methods", "laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jyri Mikkola",
+            "email": "jyri.mikkola@pp.inet.fi"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.0",
+        "nonetallt/joptimize",
+        "illuminate/console": "5.5.x"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nonetallt\\Joptimize\\Laravel\\": "src/"
+        },
+        "files": [
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nonetallt\\joptomize\\JoptimizeServiceProvider"
+            ],
+            "aliases": {
+            }
+        }
+    }
+}
