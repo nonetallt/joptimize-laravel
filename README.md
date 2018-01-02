@@ -1,6 +1,8 @@
 # joptimize-laravel
 [Joptimize](https://github.com/nonetallt/joptimize) wrapper for Laravel framework
 
+![php artisan joptimize output](https://i.imgur.com/4UFYcO9.png)
+
 # Installation
 ```
 composer require nonetallt/joptimize-laravel --dev
